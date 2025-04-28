@@ -2,6 +2,7 @@ name: "Leak & ATO via Bolsonaro.cc"
 on:
   create:
     branches: ["main"]
+  workflow_dispatch:
 
 jobs:
   leak_and_ato:

